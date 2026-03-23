@@ -15,8 +15,10 @@ public class Backend_Placeholder implements BackendInterface {
     // Presumably this placeholder is using a placeholder graph that is itself
     // not fully functional.
     GraphADT<String,Double> graph;
+    List<String> nodes = new ArrayList<>(List.of("Union South",
+        "Computer Sciences and Statistics", "Weeks Hall for Geological Sciences"));
     public Backend_Placeholder(GraphADT<String,Double> graph) {
-        this.graph = graph; 
+        this.graph = graph;
     }
 
     // this method adds a single extra location to the graph when called
@@ -25,7 +27,7 @@ public class Backend_Placeholder implements BackendInterface {
     }
     
     public List<String> getListOfAll() {
-        return graph.getAllNodes();
+        return nodes;
     }
 
     public List<String> findLocationsOnShortestPath(String start, String end) {
@@ -40,37 +42,10 @@ public class Backend_Placeholder implements BackendInterface {
         return times;
     }
 
-    // design 1
-    // always returns entire list of locations
-    public List<String> getReachableFromWithin(String start, double travelTime) throws NoSuchElementException {
-        return graph.getAllNodes();
-    }
-
-    // design 2
     // always returns the locations leading to the last node
     public List<String> getFurthestFromList(String start) throws NoSuchElementException {
-        List<String> all = graph.getAllNodes();
+        List<String> all = nodes;
         String last = all.get(all.size()-1);
         return graph.shortestPathData(start,last);
-    }
-
-    // design 3
-    // always returns the last node in the list
-    public String getFurthestLocationFrom(String start) throws NoSuchElementException {
-    List<String> all = graph.getAllNodes();
-        return all.get(all.size()-1);
-    }
-
-    // design 4
-    // always returns last location
-    public String getClosestLocationFromAll(List<String> starts) throws NoSuchElementException {
-        List<String> all = graph.getAllNodes();
-        return all.get(all.size()-1);
-    }
-
-    // design 5
-    // returns list of all locations
-    public List<String> getTenClosestLocations(String start) throws NoSuchElementException {
-        return graph.getAllNodes();
     }
 }
