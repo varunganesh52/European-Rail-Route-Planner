@@ -1,7 +1,16 @@
+/*
+ * Author: Varun Ganesh
+ * Email: vganesh6@wisc.edu
+ * Course: CS400
+ * Assignment: P2.10: Shortest Path
+ */
+
 import java.util.PriorityQueue;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class extends the BaseGraph data structure with additional methods for
@@ -93,7 +102,32 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
      * @throws NullPointerException if the start or end node are null
      */
     protected SearchNode computeShortestPath(Node start, Node end) {
-        return null;
+        PriorityQueue<SearchNode> queue = new PriorityQueue<>();
+        PlaceholderMap<Node, Node> visited = new PlaceholderMap<>();
+
+        queue.add(new SearchNode(start));
+        while (!queue.isEmpty()) {
+            SearchNode current = queue.remove();
+            //Skip node if already visited
+            if (visited.containsKey(current.node)) {
+                continue;
+            }
+
+            //Mark node as visited and return if end of path is reached
+            visited.put(current.node, current.node);
+            if (current.node == end) {
+                return current;
+            }
+
+            //Add paths extending from current node to each neighbor that hasn't been visited
+            for (Edge edge : current.node.edgesLeaving) {
+                if (!visited.containsKey(edge.succ)) {
+                    queue.add(new SearchNode(current, edge));
+                }
+            }
+        }
+        //If queue becomes empty without reaching the end, path does not exist
+        throw new NoSuchElementException("Path does not exist between start and end nodes");
     }
 
     /**
@@ -112,7 +146,20 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
      * @throws NullPointerException if the start or end node are null
      */
     public List<NodeType> shortestPathData(NodeType start, NodeType end) {
-        return null;
+        //Get start and ending nodes
+        Node startNode = nodes.get(start);
+        Node endNode = nodes.get(end);
+
+        //Creates path from end to start, using the predecessor links
+        LinkedList<NodeType> path = new LinkedList<>();
+        SearchNode current = computeShortestPath(startNode, endNode);
+
+        while (current != null) {
+            path.addFirst(current.node.data);
+            current = current.pred;
+        }
+
+        return path;
     }
 
     /**
@@ -129,7 +176,113 @@ public class DijkstraGraph<NodeType, EdgeType extends Number>
      * @throws NullPointerException if the start or end node are null
      */
     public double shortestPathCost(NodeType start, NodeType end) {
-        return Double.NaN;
+        //Get start and ending nodes
+        Node startNode = nodes.get(start);
+        Node endNode = nodes.get(end);
+        //Return total cost of shortest path
+        return computeShortestPath(startNode, endNode).cost;
     }
 
+    /**
+     * Tests a lecture example using graph from 03/18
+     * Tests that the shortest path from A to E is correct according with lecture with total cost 8
+     */
+    @Test
+    public void test1() {
+        DijkstraGraph<String, Integer> graph = new DijkstraGraph<String, Integer>();
+
+        //Insert graph nodes and assign weights to directed edges
+        graph.insertNode("A");
+        graph.insertNode("B");
+        graph.insertNode("C");
+        graph.insertNode("D");
+        graph.insertNode("E");
+        graph.insertNode("F");
+        graph.insertNode("G");
+        graph.insertNode("H");
+        graph.insertEdge("A", "B", 4);
+        graph.insertEdge("A", "C", 2);
+        graph.insertEdge("A", "E", 15);
+        graph.insertEdge("B", "D", 1);
+        graph.insertEdge("B", "E", 10);
+        graph.insertEdge("C", "D", 5);
+        graph.insertEdge("D", "E", 3);
+        graph.insertEdge("D", "F", 0);
+        graph.insertEdge("F", "D", 2);
+        graph.insertEdge("F", "H", 4);
+        graph.insertEdge("G", "H", 4);
+
+        //Check that shortest path from A to E is returned correctly with correct total cost
+        List<String> expectedPath = new LinkedList<String>();
+        expectedPath.add("A");
+        expectedPath.add("B");
+        expectedPath.add("D");
+        expectedPath.add("E");
+
+        assertEquals(expectedPath, graph.shortestPathData("A", "E"));
+        assertEquals(graph.shortestPathCost("A", "E"), 8.0);
+    }
+
+    /**
+     * Uses same lecture example graph from 03/18
+     * Tests that the shortest path from D to H is correct according with lecture with total cost 4
+     */
+    @Test
+    public void test2() {
+        DijkstraGraph<String, Integer> graph = new DijkstraGraph<String, Integer>();
+
+        //Insert graph nodes and assign weights to directed edges
+        graph.insertNode("A");
+        graph.insertNode("B");
+        graph.insertNode("C");
+        graph.insertNode("D");
+        graph.insertNode("E");
+        graph.insertNode("F");
+        graph.insertNode("G");
+        graph.insertNode("H");
+        graph.insertEdge("A", "B", 4);
+        graph.insertEdge("A", "C", 2);
+        graph.insertEdge("A", "E", 15);
+        graph.insertEdge("B", "D", 1);
+        graph.insertEdge("B", "E", 10);
+        graph.insertEdge("C", "D", 5);
+        graph.insertEdge("D", "E", 3);
+        graph.insertEdge("D", "F", 0);
+        graph.insertEdge("F", "D", 2);
+        graph.insertEdge("F", "H", 4);
+        graph.insertEdge("G", "H", 4);
+
+        //Check that shortest path from D to H is returned correctly with correct total cost
+        List<String> expectedPath = new LinkedList<String>();
+        expectedPath.add("D");
+        expectedPath.add("F");
+        expectedPath.add("H");
+
+        assertEquals(expectedPath, graph.shortestPathData("D", "H"));
+        assertEquals(graph.shortestPathCost("D", "H"), 4.0);
+    }
+
+    /**
+     * Tests exception behavior with a new graph
+     * Checks that NoSuchElementException is thrown when a path doesn't exist
+     * or when start or end node doesn't exist
+     */
+    @Test
+    public void test3() {
+        DijkstraGraph<String, Integer> graph = new DijkstraGraph<String, Integer>();
+
+        graph.insertNode("A");
+        graph.insertNode("B");
+        graph.insertNode("C");
+        graph.insertNode("D");
+
+        //Graph cannot have a path from A to D
+        graph.insertEdge("A", "B", 2);
+        graph.insertEdge("B", "C", 3);
+
+        //Tests that trying a path from A to D, missing start or end nodes throw NoSuchElementException
+        assertThrows(NoSuchElementException.class, () -> graph.shortestPathData("A", "D"));
+        assertThrows(NoSuchElementException.class, () -> graph.shortestPathCost("F", "C"));
+        assertThrows(NoSuchElementException.class, () -> graph.shortestPathCost("A", "M"));
+    }
 }
