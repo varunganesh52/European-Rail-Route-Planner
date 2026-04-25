@@ -213,7 +213,7 @@ public class Backend implements BackendInterface {
      * Helper method to add locations manually in backend testing
      * @param location to be added manually to locations
      */
-    public void addLocation(String location) {
+    private void addLocation(String location) {
         locations.add(location);
     }
 
