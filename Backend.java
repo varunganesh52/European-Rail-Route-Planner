@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.NoSuchElementException;
+import java.util.HashSet;
 
 /**
  * The Backend class implements the BackendInterface to create a graph
@@ -19,7 +20,7 @@ import java.util.NoSuchElementException;
  */
 public class Backend implements BackendInterface {
     private GraphADT<String, Double> graph;
-    private List<String> locations;
+    private HashSet<String> locations;
 
     /**
      * Public constructor for Backend class
@@ -31,7 +32,7 @@ public class Backend implements BackendInterface {
             throw new NullPointerException("Graph must exist!");
         }
         this.graph = graph;
-        this.locations = new ArrayList<String>();
+        this.locations = new HashSet<String>();
     }
 
     /**
@@ -155,8 +156,7 @@ public class Backend implements BackendInterface {
         double maxCost = 0.0;
         boolean found = false;
 
-        for (int i = 0; i < locations.size(); i++) {
-            String current = locations.get(i);
+        for (String current : locations) {
             //Skip comparison between start location to itself
             if (current.equals(start)) {
                 continue;
@@ -192,8 +192,8 @@ public class Backend implements BackendInterface {
      * Private helper method to clear all nodes from the graph
      */
     private void clearExistingGraphData() {
-        for (int i = 0; i < locations.size(); i++) {
-            graph.removeNode(locations.get(i));
+        for (String location : locations) {
+            graph.removeNode(location);
         }
         locations.clear();
     }
