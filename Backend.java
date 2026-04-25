@@ -190,6 +190,7 @@ public class Backend implements BackendInterface {
 
     /**
      * Private helper method to clear all nodes from the graph
+     * Removes all tracked locations from both graph and backend's locations hashset
      */
     private void clearExistingGraphData() {
         for (String location : locations) {
