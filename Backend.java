@@ -212,6 +212,8 @@ public class Backend implements BackendInterface {
 
     /**
      * Helper method to add locations manually in backend testing
+     * Adds a location directly to backend's location hashset without inserting it into graph
+     * Intended only for the BackendTests file and not as a helper method for Backend
      * @param location to be added manually to locations
      */
     private void addLocation(String location) {
