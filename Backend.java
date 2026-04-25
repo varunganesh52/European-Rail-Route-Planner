@@ -56,10 +56,25 @@ public class Backend implements BackendInterface {
 
             //Split DOT file to get both location names and time
             String[] parts = line.split("\"");
+            if (parts.length < 4 || !line.contains("minutes=")) {
+                scanner.close();
+                throw new IOException("Invalid file format!");
+            }
             String predecessor = parts[1];
             String successor = parts[3];
-            String weightText = line.split("minutes=")[1].replace("];", "").trim();
-            Double weight = Double.valueOf(weightText);
+            String[] weightParts = line.split("minutes=");
+            //Check that line has expected minutes value
+            if (weightParts.length < 2) {
+                scanner.close();
+                throw new IOException("Invalid File Format!");
+            }
+            String weightText = weightParts[1].replace("];", "").trim();
+            Double weight;
+            try {
+                weight = Double.valueOf(weightText);
+            } catch (NumberFormatException nfe) {
+                throw new IOException("Invalid edge weight!");
+            }
 
             //Add each location once to both graph and locations list
             if (!locations.contains(predecessor)) {
@@ -196,7 +211,6 @@ public class Backend implements BackendInterface {
     public void addLocation(String location) {
         locations.add(location);
     }
-
 
 
 }
