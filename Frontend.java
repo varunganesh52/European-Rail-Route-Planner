@@ -57,11 +57,10 @@ public class Frontend implements FrontendInterface {
     public String generateShortestPathResponseHTML(String start, String end) {
         try {
             List<String> locations = backend.findLocationsOnShortestPath(start, end);
-            List<Double> times = backend.findTimesOnShortestPath(start, end);
-
-            if (locations == null || locations.size() == 0) {
-                return "<p>No path could be found from " + start + " to " + end + ".</p>";
+	    if (locations == null || locations.size() == 0) {
+                return "<p>No path could be found from " + start + " to " + end>
             }
+            List<Double> times = backend.findTimesOnShortestPath(start, end);
 
             double totalTime = 0.0;
             if (times != null) {
