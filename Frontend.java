@@ -58,8 +58,12 @@ public class Frontend implements FrontendInterface {
             }
 
             double totalTime = 0.0;
-            if (times != null && times.size() > 0) {
-                totalTime = times.get(times.size() - 1);
+	    if (times != null) {
+    	        for (Double time : times) {
+                    if (time != null) {
+                        totalTime += time;
+                    }
+    	        }
             }
 
             String html = "";
