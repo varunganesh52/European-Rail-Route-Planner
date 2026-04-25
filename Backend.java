@@ -77,14 +77,8 @@ public class Backend implements BackendInterface {
             }
 
             //Add each location once to both graph and locations list
-            if (!locations.contains(predecessor)) {
-                graph.insertNode(predecessor);
-                locations.add(predecessor);
-            }
-            if (!locations.contains(successor)) {
-                graph.insertNode(successor);
-                locations.add(successor);
-            }
+            addLocationIfMissing(predecessor);
+            addLocationIfMissing(successor);
 
             //Add directed edge and its weight to the graph
             graph.insertEdge(predecessor, successor, weight);
@@ -205,12 +199,22 @@ public class Backend implements BackendInterface {
     }
 
     /**
+     * Adds a location to graph and list if it is not already existing
+     * @param location the location to add
+     */
+    private void addLocationIfMissing(String location) {
+        if (!locations.contains(location)) {
+            graph.insertNode(location);
+            locations.add(location);
+        }
+    }
+
+    /**
      * Helper method to add locations manually in backend testing
      * @param location to be added manually to locations
      */
     public void addLocation(String location) {
         locations.add(location);
     }
-
 
 }
