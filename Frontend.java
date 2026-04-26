@@ -10,8 +10,12 @@ public class Frontend implements FrontendInterface {
     /**
      * Constructor required by the interface comments.
      * @param backend is used for shortest path computations
+     * @throws IllegalArgumentException if backend is null
      */
     public Frontend(BackendInterface backend) {
+        if (backend == null) {
+            throw new IllegalArgumentException("backend cannot be null");
+        }
         this.backend = backend;
     }
 
@@ -26,13 +30,15 @@ public class Frontend implements FrontendInterface {
      */
     @Override
     public String generateShortestPathPromptHTML() {
-        String html = "";
-        html += "<label for=\"start\">Start Location:</label>\n";
-        html += "<input type=\"text\" id=\"start\" name=\"start\">\n";
-        html += "<label for=\"end\">End Location:</label>\n";
-        html += "<input type=\"text\" id=\"end\" name=\"end\">\n";
-        html += "<button>Find Shortest Path</button>\n";
-        return html;
+        StringBuilder html = new StringBuilder();
+
+        html.append("<label for=\"start\">Start Location:</label>\n");
+        html.append("<input type=\"text\" id=\"start\" name=\"start\">\n");
+        html.append("<label for=\"end\">End Location:</label>\n");
+        html.append("<input type=\"text\" id=\"end\" name=\"end\">\n");
+        html.append("<button>Find Shortest Path</button>\n");
+
+        return html.toString();
     }
 
     /**
@@ -51,27 +57,41 @@ public class Frontend implements FrontendInterface {
     public String generateShortestPathResponseHTML(String start, String end) {
         try {
             List<String> locations = backend.findLocationsOnShortestPath(start, end);
+	    if (locations == null || locations.size() == 0) {
+		return "<p>No path could be found from " + start + " to " + end + ".</p>";
+            }
             List<Double> times = backend.findTimesOnShortestPath(start, end);
 
-            if (locations == null || locations.size() == 0) {
-                return "<p>No path could be found from " + start + " to " + end + ".</p>";
-            }
-
             double totalTime = 0.0;
-            if (times != null && times.size() > 0) {
-                totalTime = times.get(times.size() - 1);
+            if (times != null) {
+                for (Double time : times) {
+                    if (time != null) {
+                        totalTime += time;
+                    }
+                }
             }
 
-            String html = "";
-            html += "<p>Start Location: " + start + ", End Location: " + end + "</p>\n";
-            html += "<ol>\n";
+            StringBuilder html = new StringBuilder();
+
+            html.append("<p>Start Location: ")
+                .append(start)
+                .append(", End Location: ")
+                .append(end)
+                .append("</p>\n");
+
+            html.append("<ol>\n");
             for (String location : locations) {
-                html += "<li>" + location + "</li>\n";
+                html.append("<li>")
+                    .append(location)
+                    .append("</li>\n");
             }
-            html += "</ol>\n";
-            html += "<p>Total time: " + totalTime + "</p>\n";
+            html.append("</ol>\n");
 
-            return html;
+            html.append("<p>Total time: ")
+                .append(totalTime)
+                .append("</p>\n");
+
+            return html.toString();
         } catch (Exception e) {
             return "<p>Problem encountered while finding shortest path from "
                 + start + " to " + end + ".</p>";
@@ -90,11 +110,13 @@ public class Frontend implements FrontendInterface {
      */
     @Override
     public String generateFurthestLocationListFromPromptHTML() {
-        String html = "";
-        html += "<label for=\"from\">Start Location:</label>\n";
-        html += "<input type=\"text\" id=\"from\" name=\"from\">\n";
-        html += "<button>Furthest Location List</button>\n";
-        return html;
+        StringBuilder html = new StringBuilder();
+
+        html.append("<label for=\"from\">Start Location:</label>\n");
+        html.append("<input type=\"text\" id=\"from\" name=\"from\">\n");
+        html.append("<button>Furthest Location List</button>\n");
+
+        return html.toString();
     }
 
     /**
@@ -120,17 +142,27 @@ public class Frontend implements FrontendInterface {
             }
 
             String end = locations.get(locations.size() - 1);
+            StringBuilder html = new StringBuilder();
 
-            String html = "";
-            html += "<p>Start Location: " + start + ", End Location: " + end + "</p>\n";
-            html += "<ol>\n";
+            html.append("<p>Start Location: ")
+                .append(start)
+                .append(", End Location: ")
+                .append(end)
+                .append("</p>\n");
+
+            html.append("<ol>\n");
             for (String location : locations) {
-                html += "<li>" + location + "</li>\n";
+                html.append("<li>")
+                    .append(location)
+                    .append("</li>\n");
             }
-            html += "</ol>\n";
-            html += "<p>Total number of locations: " + locations.size() + "</p>\n";
+            html.append("</ol>\n");
 
-            return html;
+            html.append("<p>Total number of locations: ")
+                .append(locations.size())
+                .append("</p>\n");
+
+            return html.toString();
         } catch (Exception e) {
             return "<p>Problem encountered while finding furthest locations from "
                 + start + ".</p>";
