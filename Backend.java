@@ -216,7 +216,7 @@ public class Backend implements BackendInterface {
      * Intended only for the BackendTests file and not as a helper method for Backend
      * @param location to be added manually to locations
      */
-    private void addLocation(String location) {
+    public void addLocation(String location) {
         locations.add(location);
     }
 
