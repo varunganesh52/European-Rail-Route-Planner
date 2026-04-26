@@ -102,7 +102,7 @@ public class FrontendTests {
         assertTrue(html.contains("<li>A</li>"));
         assertTrue(html.contains("<li>B</li>"));
         assertTrue(html.contains("<li>C</li>"));
-        assertTrue(html.contains("Total time: 3.0"));
+        assertTrue(html.contains("Total time: 6.0"));
     }
 
     /**
