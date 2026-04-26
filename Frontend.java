@@ -58,7 +58,7 @@ public class Frontend implements FrontendInterface {
         try {
             List<String> locations = backend.findLocationsOnShortestPath(start, end);
 	    if (locations == null || locations.size() == 0) {
-                return "<p>No path could be found from " + start + " to " + end>
+		return "<p>No path could be found from " + start + " to " + end + ".</p>";
             }
             List<Double> times = backend.findTimesOnShortestPath(start, end);
 
